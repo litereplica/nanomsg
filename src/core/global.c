@@ -255,8 +255,8 @@ static void nn_global_init (void)
     nn_global_add_transport (nn_inproc);
     nn_global_add_transport (nn_ipc);
     nn_global_add_transport (nn_tcp);
-    nn_global_add_transport (nn_ws);
-    nn_global_add_transport (nn_tcpmux);
+//    nn_global_add_transport (nn_ws);
+//    nn_global_add_transport (nn_tcpmux);
 
     /*  Plug in individual socktypes. */
     nn_global_add_socktype (nn_pair_socktype);

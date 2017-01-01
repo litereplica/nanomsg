@@ -23,6 +23,10 @@
 
 #include "err.h"
 
+#ifdef __ANDROID__
+#include "thread_android.inc"
+#endif
+
 #include <signal.h>
 
 static void *nn_thread_main_routine (void *arg)
@@ -48,7 +52,11 @@ void nn_thread_init (struct nn_thread *self,
         threads, not to worker threads. */
     rc = sigfillset (&new_sigmask);
     errno_assert (rc == 0);
+#ifdef __ANDROID__
+    rc = pthread_sigmask_patched (SIG_BLOCK, &new_sigmask, &old_sigmask);
+#else
     rc = pthread_sigmask (SIG_BLOCK, &new_sigmask, &old_sigmask);
+#endif
     errnum_assert (rc == 0, rc);
 
     self->routine = routine;
@@ -58,7 +66,11 @@ void nn_thread_init (struct nn_thread *self,
     errnum_assert (rc == 0, rc);
 
     /*  Restore signal set to what it was before. */
+#ifdef __ANDROID__
+    rc = pthread_sigmask_patched (SIG_SETMASK, &old_sigmask, NULL);
+#else
     rc = pthread_sigmask (SIG_SETMASK, &old_sigmask, NULL);
+#endif
     errnum_assert (rc == 0, rc);
 }
 
